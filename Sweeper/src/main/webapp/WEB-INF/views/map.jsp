@@ -212,7 +212,7 @@ body, html {
 	        visible: true,
 	        zIndex: 99,
 	        source: new ol.source.TileWMS({
-	            url: 'http://localhost:8090/geoserver/sweeper/wms',
+	            url: 'http://192.168.0.12:8090/geoserver/sweeper/wms',
 	            params: {
 	                'LAYERS': 'sweeper:boundary',
 	                'FORMAT': 'image/png',
@@ -227,7 +227,7 @@ body, html {
 	    var lineViewLayer = new ol.layer.Tile({
 	        zIndex: 99,
 	        source: new ol.source.TileWMS({
-	            url: 'http://localhost:8090/geoserver/sweeper/wms',
+	            url: 'http://192.168.0.12:8090/geoserver/sweeper/wms',
 	            params: {
 	                'LAYERS': 'sweeper:line_view',
 	                'FORMAT': 'image/png',
