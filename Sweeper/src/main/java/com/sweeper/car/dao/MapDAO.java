@@ -17,4 +17,8 @@ public interface MapDAO {
 	//List<Map<String, Object>> getMapAjax(Map<String, Object> map);
 	
 	List<Map<String, Object>> getCoordinates(@Param("date") String date);
+
+	List<Map<String, Object>> carlist();
+
+	Map<String, Object> searchcar(Map<String, Object> map);
 }

@@ -1,14 +1,20 @@
 package com.sweeper.car.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.sweeper.car.service.MapService;
 
@@ -33,9 +39,24 @@ public class MapController {
         return toJson(coordinates);
     }
     
+//    @GetMapping("/map")
+//    public String showMap() {
+//        return "map";
+//    }
+    
     @GetMapping("/map")
-    public String showMap() {
-        return "map";
+    public ModelAndView showMap() {
+    	ModelAndView mv = new ModelAndView("map");
+    	
+    	List<Map<String, Object>> carlist = mapService.carlist();
+    	Date now = new Date();
+    	SimpleDateFormat nowdate = new SimpleDateFormat("yyyy-MM-dd");
+    	String date = nowdate.format(now);
+    	mv.addObject("carlist", carlist);
+    	mv.addObject("now", date);
+    	
+    	
+    	return mv;
     }
     
     // List<Map<String, Object>>를 JSON 형태로 변환하는 메소드
@@ -48,4 +69,15 @@ public class MapController {
             return "[]";
         }
     }
+    
+	@ResponseBody
+    @PostMapping(value="/carInfo", produces = "application/json;charset=UTF-8")
+    public String carInfo(@RequestParam Map<String, Object> map) {
+    	JSONObject json = new JSONObject();
+		Map<String, Object> info = mapService.searchcar(map);
+		json.put("carinfo", info);
+		System.err.println(json.toString());
+		return json.toString();
+    }
+  
 }

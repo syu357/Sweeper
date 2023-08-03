@@ -6,4 +6,6 @@
 	<select id="pointsSelect" resultType ="map">
 		SELECT * FROM points
 	</select>
+	
+	
 </mapper>

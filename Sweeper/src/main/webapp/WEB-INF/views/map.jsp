@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,6 +17,8 @@
 <!-- jQuery와 jQuery UI 스크립트 파일 -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="js/carInfo.js"></script>
+
 
 <style>
 body, html {
@@ -79,9 +83,9 @@ body, html {
     align-items: center;
 }
 
-#dateInput {
+/* #dateInput {
     margin: 10px;
-}
+} */
 
 </style>
 </head>
@@ -95,40 +99,6 @@ body, html {
 		<hr class="hr-divider">
 		
 		<div class="centered">
-			<div class="rounded-box">
-				<h5>차량 목록</h5>
-				<hr class="hr-divider">
-				<div id="title"> 
-					<img src="/images/sweeper_car.png" alt="청소차 아이콘">
-					<button type="button" class="btn">12가 1234</button> 
-				</div>
-				<div id="title"> 
-					<img src="/images/sweeper_car.png" alt="청소차 아이콘">
-					<button type="button" class="btn">34나 3456</button> 
-				</div>
-				<div id="title"> 
-					<img src="/images/sweeper_car.png" alt="청소차 아이콘">
-					<button type="button" class="btn">56다 5678</button> 
-				</div>
-				<div id="title"> 
-					<img src="/images/sweeper_car.png" alt="청소차 아이콘">
-					<button type="button" class="btn">78라 7890</button> 
-				</div>
-			</div>
-			
-			<div class="rounded-box">
-				<div id="title"> 
-					<div id="datePicker">
-						<label for="dateInput" id="dateLabel">날짜 선택: </label> 
-						<input type="date" id="dateInput">
-					</div>
-					<button type="button" class="btn btn-outline-primary" id="btn1">확인</button>
-				</div>
-				<hr class="hr-divider">
-				<p>운행 시간: </p>
-				<p>청소 비율: </p>
-			</div>
-			
 			<div class="rounded-box"> 
 				<div id="title"> 
 					<img src="/images/map_icon.png" alt="지도 아이콘">
@@ -142,6 +112,50 @@ body, html {
        				</div>
 				</div>		
 			</div>
+			
+			<div class="rounded-box">
+				<h5>차량 목록</h5>
+				<hr class="hr-divider">
+				<c:forEach items="${carlist }" var="ci"> 
+					<div id="title"> 
+						<img src="/images/sweeper_car.png" alt="청소차 아이콘">
+						<button type="button" class="btn carnumbtn" value="${ci.car_num }">${ci.car_num }</button> 
+					</div>
+				</c:forEach>
+			</div>
+			
+			
+			<div class="rounded-box" id ="Info" hidden>
+				<h5 class="text-center fw-bold" id="carnum"></h5>
+				<hr class="hr-divider">
+				<div> 
+					<div id="datePicker">
+						<label for="dateInput" id="dateLabel" style="margin-bottom: 10px;">&nbsp;날짜 선택 </label> 
+						<div class="row">
+							<div class="col-md-9">
+								<input type="date" class="form-control" id="dateInput" value="${now }">
+							</div>
+							<div class="col-md-3">
+								<button type="button" class="btn btn-outline-primary" id="btn1">확인</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<hr class="hr-divider">
+				<div id="calc">
+					<label>운행 시간: <b id="timediff"></b></label><br>
+					<label>청소 비율: <b id="ratio"></b></label>
+				</div>
+				<div id="empty" hidden>
+					<p class='text-center'>데이터가 없습니다.</p>
+				</div>
+				<hr class="hr-divider">
+				<div class="row">
+			        <div class="col-12" style="text-align: right;"><input type="button" id="delbtn" class="btn btn-sm" value="접기"></div>
+			    </div>
+			</div>
+			
+			
 		</div>
 	</div>
 
