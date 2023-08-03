@@ -22,5 +22,8 @@ public interface MapDAO {
 
 	List<Map<String, Object>> getPointsByDateAndCar(@Param("date") String date, @Param("carNumber") String carNumber);
 	
+	List<Map<String, Object>> carlist();
+
+	Map<String, Object> searchcar(Map<String, Object> map);
 }
 

@@ -31,4 +31,12 @@ public class MapService {
         return mapDAO.getPointsByDateAndCar(date, carNumber);
     }
     
+
+	public List<Map<String, Object>> carlist() {
+		return mapDAO.carlist();
+	}
+
+	public Map<String, Object> searchcar(Map<String, Object> map) {
+		return mapDAO.searchcar(map);
+	}
 }
