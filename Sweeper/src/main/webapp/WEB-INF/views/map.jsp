@@ -307,10 +307,10 @@ body, html {
 	    });
 	    
 	 	// 확인 버튼을 누르면 line_view 레이어를 업데이트하는 함수 호출
-	    $(document).on("click", "#btn1", function () {
-	        updateLineViewLayer();
+	 /*    $(document).on("click", "#btn1", function () {
+	        
 	    });
-
+ */
 	    // line_view 레이어를 업데이트하는 함수
 	    function updateLineViewLayer() {
 
@@ -337,6 +337,42 @@ body, html {
 	        selectedDate = event.target.value;
 	    });
 	    
+	    $("#btn1").click(function(){
+			$("#timediff").empty();
+			$("#ratio").empty();
+			lineViewLayer.setVisible(false);
+			var searchDate = $("#dateInput").val();
+			var car_num = $("#carnum").html();
+			
+				$.post({
+					url : "/carInfo",
+					data : {
+						'date': searchDate,
+						'car_num' :car_num
+					},
+					dataType : "json"
+
+				}).done(function(data) {
+					var info = data.carinfo;		
+					if(info.time != undefined || info.ratio != undefined){
+						$("#calc").prop("hidden", false);
+						$("#empty").prop("hidden", true);
+						$("#timediff").append(info.time);
+						$("#ratio").append(info.ratio+"%");
+						
+						updateLineViewLayer();
+					} else{
+						$("#calc").prop("hidden", true);
+						$("#empty").prop("hidden", false);
+					}
+				}).fail(function() {
+					alert("문제가 발생했습니다.");
+				});
+
+		
+
+		});	 	
+	 	
 	    renderMap();
 	</script>
 </body>

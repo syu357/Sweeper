@@ -26,36 +26,4 @@ $(function(){
 		$("#dateInput").val(today);
 	});
 	
-	$("#btn1").click(function(){
-		$("#timediff").empty();
-		$("#ratio").empty();
-		var searchDate = $("#dateInput").val();
-		var car_num = $("#carnum").html();
-		
-			$.post({
-				url : "/carInfo",
-				data : {
-					'date': searchDate,
-					'car_num' :car_num
-				},
-				dataType : "json"
-
-			}).done(function(data) {
-				var info = data.carinfo;		
-				if(info.time != undefined || info.ratio != undefined){
-					$("#calc").prop("hidden", false);
-					$("#empty").prop("hidden", true);
-					$("#timediff").append(info.time);
-					$("#ratio").append(info.ratio+"%");
-				} else{
-					$("#calc").prop("hidden", true);
-					$("#empty").prop("hidden", false);
-				}
-			}).fail(function() {
-				alert("문제가 발생했습니다.");
-			});
-
-
-
-	})
 });
