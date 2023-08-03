@@ -15,6 +15,6 @@ public class MapDTO {
 	private LocalDateTime date;
 	private String time;
 	private int noise;
-	private int vibration;
+	private int frequency;
 	private String car_num;
 }

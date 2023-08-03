@@ -153,6 +153,7 @@ body, html {
 		var latitude = 37.230504;
 		var map;
 		var selectedDate;
+		var currentLayer = null;
 
 		var dateParam = '<%= request.getParameter("date") %>';
 	    var date = dateParam; // JSP 코드를 사용하여 JavaScript 변수에 할당      
@@ -225,15 +226,14 @@ body, html {
 	    });
 
 	    var lineViewLayer = new ol.layer.Tile({
-	        zIndex: 99,
+	        zIndex: 100,
 	        source: new ol.source.TileWMS({
 	            url: 'http://192.168.0.12:8090/geoserver/sweeper/wms',
 	            params: {
-	                'LAYERS': 'sweeper:line_view',
+	                'LAYERS': 'sweeper:Clean_route',
 	                'FORMAT': 'image/png',
-	                'VERSION': '1.1.1',
-	                'TILED': true,
-	                'VIEWPARAMS': viewParam
+	                'VERSION': '1.1.0',
+	                'VIEWPARAMS': 'date:' + date
 	            },
 	            serverType: 'geoserver',
 	            crossOrigin: 'anonymous'
@@ -241,55 +241,23 @@ body, html {
 	        layerId : 'line_view',
 	    });
 	    
-	    var line0710Layer = new ol.layer.Tile({
-	        zIndex: 99,
-	        visible: false,
-	        source: new ol.source.TileWMS({
-	            url: 'http://localhost:8090/geoserver/sweeper/wms',
-	            params: {
-	                'LAYERS': 'sweeper:line_0710',
-	                'FORMAT': 'image/png',
-	                'VERSION': '1.1.1',
-	                'TILED': true
-	            },
-	            serverType: 'geoserver',
-	            crossOrigin: 'anonymous'
-	        })
-	    });
-	    
-	    var line0725Layer = new ol.layer.Tile({
-	        zIndex: 99,
-	        visible: false,
-	        source: new ol.source.TileWMS({
-	            url: 'http://localhost:8090/geoserver/sweeper/wms',
-	            params: {
-	                'LAYERS': 'sweeper:line_0725',
-	                'FORMAT': 'image/png',
-	                'VERSION': '1.1.1',
-	                'TILED': true
-	            },
-	            serverType: 'geoserver',
-	            crossOrigin: 'anonymous'
-	        })
-	    });
-	    
 	    function renderMap() {
 	        map = new ol.Map({
 	            target: 'map',
 	            layers: [
 	                boundaryLayer, // 경계 레이어
-	                lineViewLayer, // 라인 뷰 레이어
-	                line0710Layer, 
-	                line0725Layer, 
+	                lineViewLayer, // 경로 레이어
 	                SatelliteLayer, // 위성 지도 레이어
 	                HybridLayer, // 하이브리드 레이어
 	                BaseLayer // 기본 지도 레이어
 	            ],
 	            view: new ol.View({
 	                center: ol.proj.fromLonLat([longitude, latitude]),
-	                zoom: 11.7
+	                zoom: 11.7,
+	                projection : 'EPSG:3857',
 	            })
 	        });
+	        lineViewLayer.setVisible(false);
 	    }
 
 	    $(document).on("click", "#btnradio1", function() {
@@ -312,6 +280,7 @@ body, html {
 	            existingLayer.setVisible(false); // 모든 레이어를 숨김 처리
 	        });
 	        boundaryLayer.setVisible(true);
+	        lineViewLayer.setVisible(true);
 	        layer.setVisible(true); // 선택한 레이어만 보이도록 설정
 	    }
 	    
@@ -326,40 +295,35 @@ body, html {
 	 	// 확인 버튼을 누르면 line_view 레이어를 업데이트하는 함수 호출
 	    $(document).on("click", "#btn1", function () {
 	        updateLineViewLayer();
-	        updateLayerBasedOnDate();
 	    });
 
 	    // line_view 레이어를 업데이트하는 함수
 	    function updateLineViewLayer() {
 
 	    	// 선택한 날짜를 viewParam에 설정
-	        viewParam = "date:" + selectedDate;
+	        viewParam = 'date:' + selectedDate;
 	        console.log("* viewParam :", viewParam);
 
 	        var params = lineViewLayer.getSource().getParams();
 	        params.VIEWPARAMS = viewParam;
+	        console.log("* params :", params);
 	        
-	        // lineViewLayer의 파라미터 업데이트
+	        // 선택한 날짜에 해당하는 레이어로 업데이트
 	        lineViewLayer.getSource().updateParams(params);
+
+	        // 업데이트된 레이어를 보이기
+	        lineViewLayer.setVisible(true);
+
+	        // currentLayer 변수 업데이트
+	        currentLayer = lineViewLayer;
 	    }
 	    
-	    
-	    
-	    function updateLayerBasedOnDate() {
-	        if (selectedDate === '2023-07-10') {
-	            line0710Layer.setVisible(true);
-	            line0725Layer.setVisible(false);
-	        } else if (selectedDate === '2023-07-25') {
-	            line0710Layer.setVisible(false);
-	            line0725Layer.setVisible(true);
-	        } else {
-	            line0710Layer.setVisible(false);
-	            line0725Layer.setVisible(false);
-	        }
-	    }
+	 	// datePicker의 값을 가져오기
+	    datePicker.addEventListener("change", (event) => {
+	        selectedDate = event.target.value;
+	    });
 	    
 	    renderMap();
-	    
 	</script>
 </body>
 </html>

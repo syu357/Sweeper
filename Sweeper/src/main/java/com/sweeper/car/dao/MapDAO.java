@@ -17,4 +17,10 @@ public interface MapDAO {
 	//List<Map<String, Object>> getMapAjax(Map<String, Object> map);
 	
 	List<Map<String, Object>> getCoordinates(@Param("date") String date);
+
+	//List<Map<String, Object>> getPointsWithNoiseAndFreq();
+
+	List<Map<String, Object>> getPointsByDateAndCar(@Param("date") String date, @Param("carNumber") String carNumber);
+	
 }
+

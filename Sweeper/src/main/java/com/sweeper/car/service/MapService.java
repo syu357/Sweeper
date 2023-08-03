@@ -26,4 +26,9 @@ public class MapService {
         
     	return coordinates;
     }
+    
+    public List<Map<String, Object>> getPointsByDateAndCar(String date, String carNumber) {
+        return mapDAO.getPointsByDateAndCar(date, carNumber);
+    }
+    
 }

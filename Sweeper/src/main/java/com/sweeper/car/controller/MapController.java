@@ -35,8 +35,22 @@ public class MapController {
     
     @GetMapping("/map")
     public String showMap() {
+    	
         return "map";
     }
+    
+//    @GetMapping("/map")
+//    public String mapPage(@RequestParam(name = "selectedDate", defaultValue = "2023-07-10") String selectedDate,
+//                          @RequestParam(name = "selectedCarNumber", defaultValue = "12가1234") String selectedCarNumber,
+//                          Model model) {
+//
+//        List<Map<String, Object>> points = mapService.getPointsByDateAndCar(selectedDate, selectedCarNumber);
+//        model.addAttribute("points", points);
+//        model.addAttribute("selectedDate", selectedDate);
+//        model.addAttribute("selectedCarNumber", selectedCarNumber);
+//
+//        return "map"; // map.jsp로 매핑
+//    }
     
     // List<Map<String, Object>>를 JSON 형태로 변환하는 메소드
     private String toJson(List<Map<String, Object>> data) {
