@@ -39,4 +39,13 @@ public class MapService {
 	public Map<String, Object> searchcar(Map<String, Object> map) {
 		return mapDAO.searchcar(map);
 	}
+	
+	
+	public Map<String, Object> asc(Map<String, Object> map) {
+		return mapDAO.asc(map);
+	}
+	
+	public Map<String, Object> desc(Map<String, Object> map) {
+		return mapDAO.desc(map);
+	}
 }

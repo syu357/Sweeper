@@ -19,7 +19,6 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script src="js/carInfo.js"></script>
 
-
 <style>
 body, html {
 	margin: 0;
@@ -65,10 +64,6 @@ body, html {
 	border: 1px solid #ddd; /* 경계선 색 */
 }
 
-.datePicker {
-	
-}
-
 #sidebar img {
 	display: block;
 	width: 15%;
@@ -83,10 +78,6 @@ body, html {
     align-items: center;
 }
 
-/* #dateInput {
-    margin: 10px;
-} */
-
 </style>
 </head>
 
@@ -94,7 +85,8 @@ body, html {
 	<div id="sidebar">
 		<div id="title">
 			<img src="/images/yongin.png" alt="용인시 심볼">
-			<h5>용인시 청소차 관제 시스템</h5>
+			<h5><b>용인시 청소차 관제 시스템</b></h5>
+
 		</div>
 		<hr class="hr-divider">
 		
@@ -114,7 +106,7 @@ body, html {
 			</div>
 			
 			<div class="rounded-box">
-				<h5>차량 목록</h5>
+				<h5 class="text-center fw-bold">차량 목록</h5>
 				<hr class="hr-divider">
 				<c:forEach items="${carlist }" var="ci"> 
 					<div id="title"> 
@@ -124,13 +116,12 @@ body, html {
 				</c:forEach>
 			</div>
 			
-			
 			<div class="rounded-box" id ="Info" hidden>
 				<h5 class="text-center fw-bold" id="carnum"></h5>
 				<hr class="hr-divider">
 				<div> 
 					<div id="datePicker">
-						<label for="dateInput" id="dateLabel" style="margin-bottom: 10px;">&nbsp;날짜 선택 </label> 
+						<label for="dateInput" id="dateLabel" style="margin-bottom: 10px;">&nbsp;날짜 선택 : </label> 
 						<div class="row">
 							<div class="col-md-9">
 								<input type="date" class="form-control" id="dateInput" value="${now }">
@@ -143,8 +134,8 @@ body, html {
 				</div>
 				<hr class="hr-divider">
 				<div id="calc">
-					<label>운행 시간: <b id="timediff"></b></label><br>
-					<label>청소 비율: <b id="ratio"></b></label>
+					<label>운행 시간 : <b id="timediff"></b></label><br>
+					<label>청소 비율 : <b id="ratio"></b></label>
 				</div>
 				<div id="empty" hidden>
 					<p class='text-center'>데이터가 없습니다.</p>
@@ -154,8 +145,6 @@ body, html {
 			        <div class="col-12" style="text-align: right;"><input type="button" id="delbtn" class="btn btn-sm" value="접기"></div>
 			    </div>
 			</div>
-			
-			
 		</div>
 	</div>
 
@@ -225,7 +214,7 @@ body, html {
 	    var boundaryLayer = new ol.layer.Tile({
 	        opacity: 0.2,
 	        visible: true,
-	        zIndex: 99,
+	        zIndex: 100,
 	        source: new ol.source.TileWMS({
 	            url: 'http://192.168.0.12:8090/geoserver/sweeper/wms',
 	            params: {
@@ -255,10 +244,44 @@ body, html {
 	        layerId : 'line_view',
 	    });
 	    
+	 	// 시작과 끝 마커 이미지 설정
+        var startMarkerStyle = new ol.style.Style({
+        	zIndex: 101,
+            image: new ol.style.Icon({
+                anchor: [0.5, 1],
+                src: '/images/black_marker.png',
+                scale: 0.075 // 마커의 크기 조절
+            })
+        });
+
+        var endMarkerStyle = new ol.style.Style({
+        	zIndex: 101,
+            image: new ol.style.Icon({
+                anchor: [0.5, 0.5],
+                src: '/images/sweeper_car.png',
+                scale: 0.3
+            })
+        });
+
+        // 시작과 끝 마커 레이어 생성
+        var startMarkerLayer = new ol.layer.Vector({
+        	zIndex: 101,
+            source: new ol.source.Vector(),
+            style: startMarkerStyle
+        });
+
+        var endMarkerLayer = new ol.layer.Vector({
+        	zIndex: 101,
+            source: new ol.source.Vector(),
+            style: endMarkerStyle
+        });
+	    
 	    function renderMap() {
 	        map = new ol.Map({
 	            target: 'map',
 	            layers: [
+	            	startMarkerLayer,
+		            endMarkerLayer,
 	                boundaryLayer, // 경계 레이어
 	                lineViewLayer, // 경로 레이어
 	                SatelliteLayer, // 위성 지도 레이어
@@ -272,6 +295,8 @@ body, html {
 	            })
 	        });
 	        lineViewLayer.setVisible(false);
+	        startMarkerLayer.setVisible(false);
+	        endMarkerLayer.setVisible(false);
 	    }
 
 	    $(document).on("click", "#btnradio1", function() {
@@ -293,8 +318,12 @@ body, html {
 	        map.getLayers().forEach(function (existingLayer) {
 	            existingLayer.setVisible(false); // 모든 레이어를 숨김 처리
 	        });
+	        
+	        startMarkerLayer.setVisible(true);
+	        endMarkerLayer.setVisible(true);
 	        boundaryLayer.setVisible(true);
 	        lineViewLayer.setVisible(true);
+	        
 	        layer.setVisible(true); // 선택한 레이어만 보이도록 설정
 	    }
 	    
@@ -306,11 +335,6 @@ body, html {
 	        selectedDate = event.target.value;
 	    });
 	    
-	 	// 확인 버튼을 누르면 line_view 레이어를 업데이트하는 함수 호출
-	 /*    $(document).on("click", "#btn1", function () {
-	        
-	    });
- */
 	    // line_view 레이어를 업데이트하는 함수
 	    function updateLineViewLayer() {
 
@@ -327,51 +351,112 @@ body, html {
 
 	        // 업데이트된 레이어를 보이기
 	        lineViewLayer.setVisible(true);
+	        
+	        startMarkerLayer.getSource().clear();
+	        endMarkerLayer.getSource().clear();
 
+	        // 마커 레이어들 업데이트 및 보이기
+	        fetchStartAndEndCoordinates();
+	        
 	        // currentLayer 변수 업데이트
 	        currentLayer = lineViewLayer;
 	    }
 	    
-	 	// datePicker의 값을 가져오기
-	    datePicker.addEventListener("change", (event) => {
-	        selectedDate = event.target.value;
-	    });
+	    function addMarker(lon, lat, name){
+	    	// 마커 feature 설정
+	        var markerFeature = new ol.Feature({
+	            geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])), //경도 위도에 포인트 설정
+	            name: name
+	        });
+	    	
+	     	// 마커에 적절한 스타일 설정
+	        var markerStyle = name === "start" ? startMarkerStyle : endMarkerStyle;
+	        markerFeature.setStyle(markerStyle);
+
+	        // 해당하는 벡터 레이어에 마커 Feature 추가
+	        if (name === "start") {
+	            startMarkerLayer.getSource().addFeature(markerFeature);
+	        } else if (name === "end") {
+	            endMarkerLayer.getSource().addFeature(markerFeature);
+	        }
+	    }
 	    
-	    $("#btn1").click(function(){
-			$("#timediff").empty();
-			$("#ratio").empty();
-			lineViewLayer.setVisible(false);
-			var searchDate = $("#dateInput").val();
-			var car_num = $("#carnum").html();
-			
-				$.post({
-					url : "/carInfo",
-					data : {
-						'date': searchDate,
-						'car_num' :car_num
-					},
-					dataType : "json"
+	    async function fetchStartAndEndCoordinates() {
+	        try {
+	            const searchDate = $("#dateInput").val();
+	            const carNum = $("#carnum").html();
 
-				}).done(function(data) {
-					var info = data.carinfo;		
-					if(info.time != undefined || info.ratio != undefined){
-						$("#calc").prop("hidden", false);
-						$("#empty").prop("hidden", true);
-						$("#timediff").append(info.time);
-						$("#ratio").append(info.ratio+"%");
-						
-						updateLineViewLayer();
-					} else{
-						$("#calc").prop("hidden", true);
-						$("#empty").prop("hidden", false);
-					}
-				}).fail(function() {
-					alert("문제가 발생했습니다.");
-				});
+	            // 시작마커와 종료마커의 좌표를 가져오는 AJAX 요청
+	            const markerData = await $.post({
+	                url: "/markerInfo",
+	                data: {
+	                    date: searchDate,
+	                    car_num: carNum,
+	                },
+	                dataType: "json",
+	            });
 
-		
+	            const startInfo = markerData.markerinfo; // 시작 마커 정보
+	            const endInfo = markerData.endinfo; // 종료 마커 정보
 
-		});	 	
+	            const startLon = startInfo.lon; // 시작 마커의 경도
+	            const startLat = startInfo.lat; // 시작 마커의 위도
+	            const endLon = endInfo.lon; // 종료 마커의 경도
+	            const endLat = endInfo.lat; // 종료 마커의 위도
+
+	            addMarker(startLon, startLat, "start");
+	            addMarker(endLon, endLat, "end");
+	            
+	         	// 마커를 추가한 뒤에 보여지도록 설정
+	            startMarkerLayer.setVisible(true);
+	            endMarkerLayer.setVisible(true);
+	        } catch (error) {
+	            console.error("Error fetching marker data:", error);
+	        }
+	    }
+	    
+	    $("#btn1").click(function(){ // =  $(document).on("click", "#btn1", function ()
+	        $("#timediff").empty();
+	        $("#ratio").empty();
+
+	        lineViewLayer.setVisible(false);
+	        startMarkerLayer.setVisible(false);
+	        endMarkerLayer.setVisible(false);
+
+	        const searchDate = $("#dateInput").val();
+	        const carNum = $("#carnum").html();
+
+	        $.post({
+	          url: "/carInfo",
+	          data: {
+	            date: searchDate,
+	            car_num: carNum,
+	          },
+	          dataType: "json",
+	        })
+	          .done(function (data) {
+	            const info = data.carinfo;
+
+	            if (info.time != undefined || info.ratio != undefined) {
+	              $("#calc").prop("hidden", false);
+	              $("#empty").prop("hidden", true);
+	              $("#timediff").append(info.time);
+	              $("#ratio").append(info.ratio + "%");
+
+	              updateLineViewLayer();
+
+	              // 시작마커와 종료마커의 좌표를 가져와서 마커 추가
+	              fetchStartAndEndCoordinates();
+	              
+	            } else {
+	              $("#calc").prop("hidden", true);
+	              $("#empty").prop("hidden", false);
+	            }
+	          })
+	          .fail(function () {
+	            alert("문제가 발생했습니다.");
+	          });
+	      });	
 	 	
 	    renderMap();
 	</script>

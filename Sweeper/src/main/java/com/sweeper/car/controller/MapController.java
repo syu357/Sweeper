@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -93,5 +92,17 @@ public class MapController {
 		System.err.println(json.toString());
 		return json.toString();
     }
+	
+	@ResponseBody
+	@PostMapping(value = "/markerInfo", produces = "application/json;charset=UTF-8")
+	public String markerInfo(@RequestParam Map<String, Object> map) {
+	    JSONObject json = new JSONObject();
+	    Map<String, Object> startinfo = mapService.asc(map);
+	    Map<String, Object> endinfo = mapService.desc(map);
+	    json.put("markerinfo", startinfo); // startinfo를 markerinfo 키로 저장
+	    json.put("endinfo", endinfo); // endinfo를 endinfo 키로 저장
+	    System.err.println(json.toString());
+	    return json.toString();
+	}
   
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.sweeper.car.dao.MapDAO">
+
+	<select id="desc" parameterType="HashMap" resultType="HashMap">
+		SELECT lon,lat from points
+ 		WHERE car_num = #{car_num} AND "date" = #{date} order by time desc limit 1 ;
+	</select>
+	
+	<select id="asc" parameterType="HashMap" resultType="HashMap">
+		select lon,lat from points
+  		WHERE car_num = #{car_num} AND "date" = #{date} order by time limit 1 ;
+	</select>
+	
+</mapper>
